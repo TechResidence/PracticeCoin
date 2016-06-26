@@ -1,4 +1,5 @@
 import urllib3
+import certifi
 from bs4 import BeautifulSoup
 import time
 from datetime import datetime
@@ -9,9 +10,10 @@ def get_soup(url, http):
   soup = BeautifulSoup(html, 'html.parser')
   return soup
 
-# ask: buy, bid: sell
+
 def get_bitcoin_price(url=TARGET_URL):
-  http = urllib3.PoolManager()
+  """ ask: buy, bid: sell """
+  http = urllib3.PoolManager(cert_reqs='CERT_REQUIRED', ca_certs=certifi.where())
   while True:
     soup = get_soup(url, http)
     bid = soup.find(id='btc_bid').get_text()
@@ -21,4 +23,9 @@ def get_bitcoin_price(url=TARGET_URL):
     print(now, 'bid: ', bid, 'ask: ', ask)
 
 
-get_bitcoin_price()
+def main():
+  get_bitcoin_price()
+
+
+if __name__ == "__main__":
+   main()
